@@ -56,7 +56,7 @@
 
 
 
-### Action
+### Action (Actually this table is for parameters for adding OU noise to action)
 <table>
   <thead>
     <tr>
