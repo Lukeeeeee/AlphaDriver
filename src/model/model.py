@@ -1,30 +1,33 @@
+import tensorflow as tf
 
 
 class Model(object):
 
-    def __init__(self):
+    def __init__(self, config, sess_flag=False, data=None):
+        self.config = config
+        if sess_flag is True:
+            self.sess = tf.InteractiveSession()
+        self.data = data
+
         pass
 
-    def create_model(self):
+    def create_model(self, *args, **kwargs):
         pass
 
-    def create_training_method(self):
+    def create_training_method(self, *args, **kwargs):
         pass
 
-    def update(self):
+    def update(self, *args, **kwargs):
         pass
 
     def eval_tensor(self, *args, **kwargs):
         pass
 
-    def get_output(self, *args, **kwargs):
+    def predict(self, *args, **kwargs):
         pass
 
-    def save_model(self):
+    def save_model(self, *args, **kwargs):
         pass
 
-    def load_model(self):
+    def load_model(self, *args, **kwargs):
         pass
-
-
-
