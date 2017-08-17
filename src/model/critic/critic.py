@@ -97,6 +97,15 @@ class Critic(Model):
                            })
         return q_value
 
+    def gradients(self, sess, state, action):
+        res = sess.run(fetches=[self.action_gradients],
+                       feed_dict={
+                           self.state: state,
+                           self.action: action,
+                           self.is_training: False
+                       })
+        return res
+
     def eval_tensor(self, ):
         raise NotImplementedError
         pass
