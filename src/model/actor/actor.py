@@ -15,40 +15,41 @@ class Actor(Model):
         self.target_state = tf.placeholder(tf.float32, shape=[None, self.config['STATE_DIM']])
         self.target_is_training = tf.placeholder(tf.bool)
 
-        self.action, self.var_list, self.keep_prob = self.create_model(state=self.state)
-        self.target_action, self.target_var_list, _ = self.create_model(state=self.target_state)
-        self.optimizer, self.optimize_loss = self.create_training_method()
+        self.net = None
+        self.target_net = None
+
+        self.loss = None
+        self.optimizer = None
+
+    @property
+    def action(self):
+        return self.net.outputs
+
+    @property
+    def var_list(self):
+        return self.net.all_params
+
+    @property
+    def keep_prob(self):
+        return self.net.all_drop
+
+    @property
+    def optimize_loss(self):
+        return self.optimizer.minimize(self.loss)
+
+    @property
+    def target_action(self):
+        return self.target_net.outputs
+
+    @property
+    def target_var_list(self):
+        return self.target_net.all_params
 
     def create_model(self, state):
-
-        net = tl.layers.InputLayer(inputs=state, name='ACTOR_INPUT_LAYER')
-        net = tl.layers.DenseLayer(layer=net,
-                                   n_units=self.config['DENSE_LAYER_1_UNIT'],
-                                   act=tf.nn.relu,
-                                   name='DENSE_LAYER_1')
-        net = tl.layers.DropconnectDenseLayer(layer=net,
-                                              n_units=self.config['DENSE_LAYER_2_UNIT'],
-                                              act=tf.nn.relu,
-                                              name='DENSE_LAYER_2',
-                                              keep=0.5)
-        net = tl.layers.DenseLayer(layer=net,
-                                   n_units=self.config['ACTION_DIM'],
-                                   act=tf.nn.tanh,
-                                   name='OUTPUT_LAYER')
-        # TODO
-        # ADD DIFFERENT ACT FUNCTION FOR OUTPUT VAR
-        # CURRENT IS ALL TANH
-
-        action = net.outputs
-        keep_prob = net.all_drop
-        var_list = net.all_params
-
-        return action, var_list, keep_prob
+        pass
 
     def create_training_method(self):
-        optimizer = tf.train.AdamOptimizer(learning_rate=self.config['LEARNING_RATE'])
-        optimize_loss = optimizer.apply_gradients(grads_and_vars=self.gradients)
-        return optimizer, optimize_loss
+        pass
 
     def update(self, sess, gradients, state):
         super(Actor, self).update()

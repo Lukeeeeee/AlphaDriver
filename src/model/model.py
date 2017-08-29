@@ -5,11 +5,10 @@ class Model(object):
 
     def __init__(self, config, sess_flag=False, data=None):
         self.config = config
+        self.data = data
+        self.net = None
         if sess_flag is True:
             self.sess = tf.InteractiveSession()
-        self.data = data
-
-        pass
 
     def create_model(self, *args, **kwargs):
         pass
