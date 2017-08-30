@@ -1,5 +1,11 @@
 key_list = [
-    'LEARNING_RATE'
+    'LEARNING_RATE',
+    'DECAY',
+    'STATE_DIM',
+    'ACTION_DIM',
+    'DENSE_LAYER_1_UNIT',
+    'DENSE_LAYER_2_UNIT',
+    'OUTPUT_LAYER',
 ]
 
 

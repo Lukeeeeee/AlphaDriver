@@ -8,17 +8,17 @@ class Actor(Model):
     def __init__(self, config, sess_flag=False, data=None):
         super(Actor, self).__init__(config, sess_flag, data)
 
-        self.state = tf.placeholder(tf.float32, shape=[None, self.config['STATE_DIM']])
+        self.state = tf.placeholder(tf.float32, shape=[None, self.config.config_dict['STATE_DIM']])
         self.is_training = tf.placeholder(tf.bool)
-        self.gradients = tf.placeholder(tf.float32, [None, self.config['ACTION_DIM']])
+        self.q_value_gradients = tf.placeholder(tf.float32, [None, self.config.config_dict['ACTION_DIM']])
 
-        self.target_state = tf.placeholder(tf.float32, shape=[None, self.config['STATE_DIM']])
+        self.target_state = tf.placeholder(tf.float32, shape=[None, self.config.config_dict['STATE_DIM']])
         self.target_is_training = tf.placeholder(tf.bool)
 
         self.net = None
         self.target_net = None
 
-        self.loss = None
+        self.optimize_loss = None
         self.optimizer = None
 
     @property
@@ -34,10 +34,6 @@ class Actor(Model):
         return self.net.all_drop
 
     @property
-    def optimize_loss(self):
-        return self.optimizer.minimize(self.loss)
-
-    @property
     def target_action(self):
         return self.target_net.outputs
 
@@ -45,7 +41,7 @@ class Actor(Model):
     def target_var_list(self):
         return self.target_net.all_params
 
-    def create_model(self, state):
+    def create_model(self, state, name_prefix):
         pass
 
     def create_training_method(self):
@@ -53,9 +49,9 @@ class Actor(Model):
 
     def update(self, sess, gradients, state):
         super(Actor, self).update()
-        loss, gradients = sess.run(fetches=[self.optimize_loss, self.gradients],
+        loss, gradients = sess.run(fetches=[self.optimize_loss, self.q_value_gradients],
                                    feed_dict={
-                                       self.gradients: gradients,
+                                       self.q_value_gradients: gradients,
                                        self.state: state,
                                        self.is_training: True
                                     })
@@ -66,7 +62,7 @@ class Actor(Model):
         # USE tensor.assign
 
         for var, target_var in zip(self.var_list, self.target_var_list):
-            target_var = self.config['DECAY'] * var + (1.0 - self.config['DECAY']) * target_var
+            target_var = self.config.config_dict['DECAY'] * var + (1.0 - self.config.config_dict['DECAY']) * target_var
 
     def predict(self, sess, state):
         action = sess.run(fetches=[self.action],

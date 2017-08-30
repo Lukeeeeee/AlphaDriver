@@ -10,8 +10,8 @@ class DDPGModel(Model):
         super(DDPGModel, self).__init__(config, sess_flag, data)
         self.actor = actor(config=config.actor_config)
         self.critic = critic(config=config.critic_config)
-        self.replay_buffer = utils.ReplayBuffer(buffer_size=self.config['BATCH_SIZE'])
-        self.noise = utils.OUNoise(action_dimension=self.config['ACTION_DIM'])
+        self.replay_buffer = utils.ReplayBuffer(buffer_size=self.config.config_dict['BATCH_SIZE'])
+        self.noise = utils.OUNoise(action_dimension=self.config.config_dict['ACTION_DIM'])
 
     def update(self):
         mini_batch = self.replay_buffer.get_batch(self.config.BATCH_SIZE)
@@ -29,8 +29,8 @@ class DDPGModel(Model):
             if done_batch[i] is True:
                 y_batch.append(reward_batch[i])
             else:
-                y_batch.append(reward_batch[i] + self.config['GAMMA_REWARD'] * q_value_batch[i])
-        y_batch = np.resize(y_batch, [self.config['BATCH_SIZE'], 1])
+                y_batch.append(reward_batch[i] + self.config.config_dict['GAMMA_REWARD'] * q_value_batch[i])
+        y_batch = np.resize(y_batch, [self.config.config_dict['BATCH_SIZE'], 1])
 
         critic_loss = self.critic.update(sess=self.sess, q_label=y_batch, state=state_batch, action=action_batch)
 
@@ -59,7 +59,7 @@ class DDPGModel(Model):
         self.replay_buffer.add(state, action, reward, next_state, done)
 
         # Store transitions to replay start size then start training
-        if self.replay_buffer.count() > self.config['REPLAY_START_SIZE']:
+        if self.replay_buffer.count() > self.config.config_dict['REPLAY_START_SIZE']:
             self.update()
             # if self.time_step % 10000 == 0:
             # self.actor_network.save_network(self.time_step)
@@ -83,10 +83,12 @@ class DDPGModel(Model):
     #
 
 
+if __name__ == '__main__':
+    from src.config.ddpgConfig import DDPGConfig
+    from configuration import CONFIG_PATH
+    from src.model.actor.denseActor import DenseActor
+    from src.model.critic.denseCritic import DenseCritic
+    from configuration.standard_key_list import ddpgKeyList
 
-
-
-
-
-
-
+    a = DDPGConfig(config_path=CONFIG_PATH + '/testDDPGConfig.json', standard_key_list=ddpgKeyList.key_list)
+    ddpg = DDPGModel(config=a, actor=DenseActor, critic=DenseCritic)

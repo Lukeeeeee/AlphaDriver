@@ -1,15 +1,16 @@
-from configuration.standard_key_list import ddpgKeyList, criticKeyList, actorKeyList
+from configuration.standard_key_list import criticKeyList, actorKeyList
 from src.config.config import Config
 from src.config.utils import check_dict_key
 
 
 class DDPGConfig(Config):
-    def __init__(self, config_path):
-        super(DDPGConfig, self).__init__(standard_key_list=ddpgKeyList.key_list)
+    def __init__(self, standard_key_list, config_path=None):
+        super(DDPGConfig, self).__init__(standard_key_list=standard_key_list)
         self.actor_config = Config(standard_key_list=actorKeyList.key_list)
 
         self.critic_config = Config(standard_key_list=criticKeyList.key_list)
-        self.load_config(path=config_path)
+        if config_path:
+            self.load_config(path=config_path)
 
     @property
     def config_dict(self):
@@ -26,6 +27,8 @@ class DDPGConfig(Config):
 
 if __name__ == '__main__':
     from configuration import CONFIG_PATH
+    from configuration.standard_key_list import ddpgKeyList
 
-    a = DDPGConfig(config_path=CONFIG_PATH + '/testDDPGConfig.json')
+    a = DDPGConfig(standard_key_list=ddpgKeyList.key_list,
+                   config_path=CONFIG_PATH + '/testDDPGConfig.json')
     pass

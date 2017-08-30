@@ -10,13 +10,13 @@ class Critic(Model):
         # TODO
         # HOW TO DEFINE THE TYPE OF THE STATE_DIM LIST OR A SCALAR?
 
-        self.state = tf.placeholder(tf.float32, shape=[None, self.config['STATE_DIM']])
-        self.action = tf.placeholder(tf.float32, shape=[None, self.config['ACTION_DIM']])
+        self.state = tf.placeholder(tf.float32, shape=[None, self.config.config_dict['STATE_DIM']])
+        self.action = tf.placeholder(tf.float32, shape=[None, self.config.config_dict['ACTION_DIM']])
         self.q_label = tf.placeholder(tf.float32, shape=[None, 1])
         self.is_training = tf.placeholder(tf.bool)
 
-        self.target_state = tf.placeholder(tf.float32, shape=[None, self.config['STATE_DIM']])
-        self.target_action = tf.placeholder(tf.float32, shape=[None, self.config['ACTION_DIM']])
+        self.target_state = tf.placeholder(tf.float32, shape=[None, self.config.config_dict['STATE_DIM']])
+        self.target_action = tf.placeholder(tf.float32, shape=[None, self.config.config_dict['ACTION_DIM']])
         self.target_is_training = tf.placeholder(tf.bool)
 
         self.net = None
@@ -59,7 +59,7 @@ class Critic(Model):
     def target_var_list(self):
         return self.target_net.all_params
 
-    def create_model(self, state, action):
+    def create_model(self, state, action, name_prefix):
         pass
 
     def create_training_method(self, q_value, action, var_list):
@@ -80,7 +80,7 @@ class Critic(Model):
         # USE tensor.assign
 
         for var, target_var in zip(self.var_list, self.target_var_list):
-            target_var = self.config['DECAY'] * var + (1.0 - self.config['DECAY']) * target_var
+            target_var = self.config.config_dict['DECAY'] * var + (1.0 - self.config.config_dict['DECAY']) * target_var
 
     def predict(self, sess, state, action):
         q_value = sess.run(fetches=[self.q_value],

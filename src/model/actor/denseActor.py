@@ -9,31 +9,44 @@ class DenseActor(Actor):
     def __init__(self, config, sess_flag=False, data=None):
         super(DenseActor, self).__init__(config, sess_flag, data)
 
-        self.net = self.create_model(self.state)
-        self.target_net = self.create_model(self.target_state)
-        self.loss, self.optimizer = self.create_training_method()
+        self.net = self.create_model(self.state, 'ACTOR_')
+        self.target_net = self.create_model(self.target_state, 'TARGET_ACTOR_')
+        self.optimizer, self.optimize_loss = self.create_training_method()
 
-    def create_model(self, state):
-        net = tl.layers.InputLayer(inputs=state, name='ACTOR_INPUT_LAYER')
+    def create_model(self, state, name_prefix):
+        net = tl.layers.InputLayer(inputs=state,
+                                   name=name_prefix + 'INPUT_LAYER')
         net = tl.layers.DenseLayer(layer=net,
-                                   n_units=self.config['DENSE_LAYER_1_UNIT'],
+                                   n_units=self.config.config_dict['DENSE_LAYER_1_UNIT'],
                                    act=tf.nn.relu,
-                                   name='DENSE_LAYER_1')
+                                   name=name_prefix + 'DENSE_LAYER_1')
         net = tl.layers.DropconnectDenseLayer(layer=net,
-                                              n_units=self.config['DENSE_LAYER_2_UNIT'],
+                                              n_units=self.config.config_dict['DENSE_LAYER_2_UNIT'],
                                               act=tf.nn.relu,
-                                              name='DENSE_LAYER_2',
+                                              name=name_prefix + 'DENSE_LAYER_2',
                                               keep=0.5)
         net = tl.layers.DenseLayer(layer=net,
-                                   n_units=self.config['ACTION_DIM'],
+                                   n_units=self.config.config_dict['ACTION_DIM'],
                                    act=tf.nn.tanh,
-                                   name='OUTPUT_LAYER')
+                                   name=name_prefix + 'OUTPUT_LAYER')
         # TODO
         # ADD DIFFERENT ACT FUNCTION FOR OUTPUT VAR
         # CURRENT IS ALL TANH
         return net
 
     def create_training_method(self):
-        optimizer = tf.train.AdamOptimizer(learning_rate=self.config['LEARNING_RATE'])
-        optimize_loss = optimizer.apply_gradients(grads_and_vars=self.gradients)
+        parameters_gradients = tf.gradients(self.action, self.var_list, -self.q_value_gradients)
+        optimizer = tf.train.AdamOptimizer(learning_rate=self.config.config_dict['LEARNING_RATE'])
+        optimize_loss = optimizer.apply_gradients(grads_and_vars=zip(parameters_gradients, self.var_list))
         return optimizer, optimize_loss
+
+
+if __name__ == '__main__':
+    from src.config.config import Config
+    from configuration import CONFIG_PATH
+    from configuration.standard_key_list.actorKeyList import key_list
+
+    a = Config(config_dict=None, standard_key_list=key_list)
+    a.load_config(path=CONFIG_PATH + '/testActorConfig.json')
+    actor = DenseActor(config=a)
+    pass

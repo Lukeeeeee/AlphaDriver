@@ -2,12 +2,8 @@ from src.config.utils import load_json, save_to_json, check_dict_key
 
 
 class Config(object):
-    def __init__(self, config_dict=None, standard_key_list=None):
-        if standard_key_list:
-            self.standard_key_list = standard_key_list
-        else:
-            self.standard_key_list = []
-        pass
+    def __init__(self, standard_key_list, config_dict=None):
+        self.standard_key_list = standard_key_list
 
         if config_dict:
             self._config_dict = config_dict
