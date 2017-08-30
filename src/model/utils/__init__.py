@@ -1,3 +1,3 @@
 from replayBuffer import ReplayBuffer
-from OUNoise import OUNoise
+from ouNoise import OUNoise
 from util import *

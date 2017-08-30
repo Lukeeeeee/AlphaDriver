@@ -70,15 +70,15 @@ class DDPGModel(Model):
             self.noise.reset()
 
     # def save_model(self, global_step):
-    #     tl.files.save_ckpt(sess=self.sess, save_dir=self.config['MODEL_SAVE_DIR'], global_step=global_step)
+            #     tl.files.save_ckpt(sess=self.sess, save_dir=self.config_json['MODEL_SAVE_DIR'], global_step=global_step)
     #
     # def load_model(self, global_step=None):
     #     if global_step:
     #         tl.files.load_ckpt(sess=self.sess,
-    #                            save_dir=self.config['MODEL_LOAD_DIR'] + '/model.ckpt-' + str(global_step))
+            #                            save_dir=self.config_json['MODEL_LOAD_DIR'] + '/model.ckpt-' + str(global_step))
     #     else:
     #         tl.files.load_ckpt(sess=self.sess,
-    #                            save_dir=self.config['MODE_LOAD_DIR'],
+            #                            save_dir=self.config_json['MODE_LOAD_DIR'],
     #                            is_latest=True)
     #
 

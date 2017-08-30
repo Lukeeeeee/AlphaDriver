@@ -1,0 +1,9 @@
+{
+  "LEARNING_RATE": 0.01,
+  "ACTOR_CONFIG": {
+    "LEARNING_RATE": 0.01
+  },
+  "CRITIC_CONFIG": {
+    "LEARNING_RATE": 0.01
+  }
+}
