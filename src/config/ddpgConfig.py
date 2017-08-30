@@ -1,6 +1,6 @@
+from configuration.standard_key_list import ddpgKeyList, criticKeyList, actorKeyList
 from src.config.config import Config
-from src.config.utils import load_json, save_to_json, check_dict_key
-from src.config.standard_key_list import ddpgKeyList, actorKeyList, criticKeyList
+from src.config.utils import check_dict_key
 
 
 class DDPGConfig(Config):
@@ -25,7 +25,7 @@ class DDPGConfig(Config):
 
 
 if __name__ == '__main__':
-    from config_json import CONFIG_PATH
+    from configuration import CONFIG_PATH
 
     a = DDPGConfig(config_path=CONFIG_PATH + '/testDDPGConfig.json')
     pass
