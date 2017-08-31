@@ -6,10 +6,10 @@ class Environment(object):
         pass
 
     def step(self, *args, **kwargs):
-        pass
+        return None, None, None
 
     def reset(self, *args, **kwargs):
-        pass
+        return None
 
     def end(self, *args, **kwargs):
         pass

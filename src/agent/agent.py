@@ -1,16 +1,25 @@
 
 
 class Agent(object):
-
-    def __init__(self, env):
+    def __init__(self, env, config, model=None):
         self.env = env
+        self.config = config
+        self.model = model
+        self.state = None
+        self.action = None
+        self.reward = None
+        self.reward_list = None
         pass
 
-    def observe(self):
+    def observe(self, *args, **kwargs):
         pass
 
-    def predict(self):
+    def predict(self, *args, **kwargs):
         pass
 
-    def update(self):
+    def update(self, *args, **kwargs):
         pass
+
+    def play(self, *args, **kwargs):
+        pass
+
