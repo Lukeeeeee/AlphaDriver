@@ -86,9 +86,12 @@ class DDPGModel(Model):
 if __name__ == '__main__':
     from src.config.ddpgConfig import DDPGConfig
     from configuration import CONFIG_PATH
+    from src.config.utils import load_json
     from src.model.actor.denseActor import DenseActor
     from src.model.critic.denseCritic import DenseCritic
-    from configuration.standard_key_list import ddpgKeyList
+    from configuration.standard_key_list import CONFIG_STANDARD_KEY_LIST
 
-    a = DDPGConfig(config_path=CONFIG_PATH + '/testDDPGConfig.json', standard_key_list=ddpgKeyList.key_list)
+    key_list = load_json(file_path=CONFIG_STANDARD_KEY_LIST + '/ddpgKeyList.json')
+
+    a = DDPGConfig(config_path=CONFIG_PATH + '/testDDPGConfig.json', standard_key_list=key_list)
     ddpg = DDPGModel(config=a, actor=DenseActor, critic=DenseCritic)

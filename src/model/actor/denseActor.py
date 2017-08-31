@@ -44,8 +44,10 @@ class DenseActor(Actor):
 if __name__ == '__main__':
     from src.config.config import Config
     from configuration import CONFIG_PATH
-    from configuration.standard_key_list.actorKeyList import key_list
+    from configuration.standard_key_list import CONFIG_STANDARD_KEY_LIST
+    from src.config.utils import load_json
 
+    key_list = load_json(file_path=CONFIG_STANDARD_KEY_LIST + '/actorKeyList.json')
     a = Config(config_dict=None, standard_key_list=key_list)
     a.load_config(path=CONFIG_PATH + '/testActorConfig.json')
     actor = DenseActor(config=a)

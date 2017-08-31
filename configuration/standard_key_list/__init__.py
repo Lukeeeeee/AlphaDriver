@@ -1,3 +1,3 @@
 import os
 
-SRC_CONFIG__PATH = os.path.dirname(os.path.realpath(__file__))
+CONFIG_STANDARD_KEY_LIST = os.path.dirname(os.path.realpath(__file__))

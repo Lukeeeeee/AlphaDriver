@@ -1,4 +1,3 @@
-from src.model.model import Model
 import tensorflow as tf
 import tensorlayer as tl
 from src.model.critic.critic import Critic
@@ -74,9 +73,11 @@ class DenseCritic(Critic):
 
 if __name__ == '__main__':
     from src.config.config import Config
+    from src.config.utils import load_json
     from configuration import CONFIG_PATH
-    from configuration.standard_key_list.criticKeyList import key_list
+    from configuration.standard_key_list import CONFIG_STANDARD_KEY_LIST
 
+    key_list = load_json(file_path=CONFIG_STANDARD_KEY_LIST + '/criticKeyList.json')
     a = Config(standard_key_list=key_list)
     a.load_config(path=CONFIG_PATH + '/testCriticConfig.json')
     critic = DenseCritic(config=a)

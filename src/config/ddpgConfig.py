@@ -1,14 +1,16 @@
-from configuration.standard_key_list import criticKeyList, actorKeyList
 from src.config.config import Config
-from src.config.utils import check_dict_key
+from src.config.utils import check_dict_key, load_json
+from configuration.standard_key_list import CONFIG_STANDARD_KEY_LIST
 
 
 class DDPGConfig(Config):
     def __init__(self, standard_key_list, config_path=None):
         super(DDPGConfig, self).__init__(standard_key_list=standard_key_list)
-        self.actor_config = Config(standard_key_list=actorKeyList.key_list)
+        actor_key_list = load_json(file_path=CONFIG_STANDARD_KEY_LIST + '/actorKeyList.json')
+        self.actor_config = Config(standard_key_list=actor_key_list)
 
-        self.critic_config = Config(standard_key_list=criticKeyList.key_list)
+        critic_key_list = load_json(file_path=CONFIG_STANDARD_KEY_LIST + '/criticKeyList.json')
+        self.critic_config = Config(standard_key_list=critic_key_list)
         if config_path:
             self.load_config(path=config_path)
 
@@ -27,8 +29,9 @@ class DDPGConfig(Config):
 
 if __name__ == '__main__':
     from configuration import CONFIG_PATH
-    from configuration.standard_key_list import ddpgKeyList
+    from configuration.standard_key_list import CONFIG_STANDARD_KEY_LIST
 
-    a = DDPGConfig(standard_key_list=ddpgKeyList.key_list,
+    key_list = load_json(file_path=CONFIG_STANDARD_KEY_LIST + '/ddpgKeyList.json')
+    a = DDPGConfig(standard_key_list=key_list,
                    config_path=CONFIG_PATH + '/testDDPGConfig.json')
     pass
