@@ -5,11 +5,14 @@ class Environment(object):
     def __init__(self):
         pass
 
-    def step(self):
+    def step(self, *args, **kwargs):
         pass
 
-    def reset(self):
+    def reset(self, *args, **kwargs):
         pass
 
-    def end(self):
+    def end(self, *args, **kwargs):
+        pass
+
+    def reset(self, *args, **kwargs):
         pass
