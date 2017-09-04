@@ -1,4 +1,3 @@
-from src.model.model import Model
 import tensorlayer as tl
 import tensorflow as tf
 import src.model.utils as utils
@@ -24,14 +23,12 @@ class DenseActor(Actor):
                                               n_units=self.config.config_dict['DENSE_LAYER_2_UNIT'],
                                               act=tf.nn.relu,
                                               name=name_prefix + 'DENSE_LAYER_2',
-                                              keep=0.5)
+                                              keep=self.config.config_dict['DROP_OUT_PROB_VALUE'])
         net = tl.layers.DenseLayer(layer=net,
                                    n_units=self.config.config_dict['ACTION_DIM'],
                                    act=tf.nn.tanh,
                                    name=name_prefix + 'OUTPUT_LAYER')
-        # TODO
-        # ADD DIFFERENT ACT FUNCTION FOR OUTPUT VAR
-        # CURRENT IS ALL TANH
+
         return net
 
     def create_training_method(self):

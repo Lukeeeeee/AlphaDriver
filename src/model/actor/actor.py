@@ -7,6 +7,8 @@ import src.model.utils as utils
 class Actor(Model):
     def __init__(self, config, sess_flag=False, data=None):
         super(Actor, self).__init__(config, sess_flag, data)
+        # TODO
+        # HOW TO DEFINE THE TYPE OF STATE DIM
 
         self.state = tf.placeholder(tf.float32, shape=[None, self.config.config_dict['STATE_DIM']])
         self.is_training = tf.placeholder(tf.bool)
