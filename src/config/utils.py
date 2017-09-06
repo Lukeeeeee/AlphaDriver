@@ -20,6 +20,6 @@ def load_json(file_path):
 def check_dict_key(dict, standard_key_list):
     for key in standard_key_list:
         if key not in dict:
-            print("Missing key in dict")
-            raise IndexError
+            raise IndexError('Missing %s' % key)
+
     return True

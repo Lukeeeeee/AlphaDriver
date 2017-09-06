@@ -1,0 +1,70 @@
+{
+  "LEARNING_RATE": 0.01,
+  "DECAY": 0.01,
+  "STATE_DIM": [
+    5,
+    10,
+    10,
+    3
+  ],
+  "ACTION_DIM": 10,
+  "CONV1_1_CHANNEL_SIZE": 5,
+  "CONV1_1_FILTER_SIZE": [
+    5,
+    5
+  ],
+  "CONV1_1_STRIDE_SIZE": [
+    2,
+    2
+  ],
+  "CONV1_2_CHANNEL_SIZE": 10,
+  "CONV1_2_FILTER_SIZE": [
+    5,
+    5
+  ],
+  "CONV1_2_STRIDE_SIZE": [
+    2,
+    2
+  ],
+  "POOL1_FILTER_SIZE": [
+    5,
+    5
+  ],
+  "POOL1_STRIDE_SIZE": [
+    2,
+    2
+  ],
+  "CONV2_1_CHANNEL_SIZE": 10,
+  "CONV2_1_FILTER_SIZE": [
+    5,
+    5
+  ],
+  "CONV2_1_STRIDE_SIZE": [
+    2,
+    2
+  ],
+  "CONV2_2_CHANNEL_SIZE": 10,
+  "CONV2_2_FILTER_SIZE": [
+    5,
+    5
+  ],
+  "CONV2_2_STRIDE_SIZE": [
+    2,
+    2
+  ],
+  "POOL2_FILTER_SIZE": [
+    5,
+    5
+  ],
+  "POOL2_STRIDE_SIZE": [
+    2,
+    2
+  ],
+  "DENSE_LAYER_1_UNIT": 30,
+  "DENSE_LAYER_2_UNIT": 10,
+  "DROP_OUT_PROB_VALUE": 0.5,
+  "LSMT_INPUT_LENGTH": 10,
+  "LSTM_LAYERS_NUM": 3,
+  "LSTM_DENSE_LAYER1_UNIT": 10,
+  "LSTM_DENSE_LAYER_2_UNIT": 10
+}

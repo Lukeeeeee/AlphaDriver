@@ -9,12 +9,16 @@ class Actor(Model):
         super(Actor, self).__init__(config, sess_flag, data)
         # TODO
         # HOW TO DEFINE THE TYPE OF STATE DIM
+        if type(self.config.config_dict['STATE_DIM']) is list:
+            self.state = tf.placeholder(tf.float32, shape=[None] + self.config.config_dict['STATE_DIM'])
+            self.target_state = tf.placeholder(tf.float32, shape=[None] + self.config.config_dict['STATE_DIM'])
+        else:
+            self.state = tf.placeholder(tf.float32, shape=[None, self.config.config_dict['STATE_DIM']])
+            self.target_state = tf.placeholder(tf.float32, shape=[None, self.config.config_dict['STATE_DIM']])
 
-        self.state = tf.placeholder(tf.float32, shape=[None, self.config.config_dict['STATE_DIM']])
         self.is_training = tf.placeholder(tf.bool)
         self.q_value_gradients = tf.placeholder(tf.float32, [None, self.config.config_dict['ACTION_DIM']])
 
-        self.target_state = tf.placeholder(tf.float32, shape=[None, self.config.config_dict['STATE_DIM']])
         self.target_is_training = tf.placeholder(tf.bool)
 
         self.net = None
