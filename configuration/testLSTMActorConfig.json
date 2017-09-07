@@ -14,8 +14,8 @@
     5
   ],
   "CONV1_1_STRIDE_SIZE": [
-    2,
-    2
+    1,
+    1
   ],
   "CONV1_2_CHANNEL_SIZE": 10,
   "CONV1_2_FILTER_SIZE": [
@@ -23,12 +23,12 @@
     5
   ],
   "CONV1_2_STRIDE_SIZE": [
-    2,
-    2
+    1,
+    1
   ],
   "POOL1_FILTER_SIZE": [
-    5,
-    5
+    2,
+    2
   ],
   "POOL1_STRIDE_SIZE": [
     2,
@@ -40,8 +40,8 @@
     5
   ],
   "CONV2_1_STRIDE_SIZE": [
-    2,
-    2
+    1,
+    1
   ],
   "CONV2_2_CHANNEL_SIZE": 10,
   "CONV2_2_FILTER_SIZE": [
@@ -49,12 +49,12 @@
     5
   ],
   "CONV2_2_STRIDE_SIZE": [
-    2,
-    2
+    1,
+    1
   ],
   "POOL2_FILTER_SIZE": [
-    5,
-    5
+    2,
+    2
   ],
   "POOL2_STRIDE_SIZE": [
     2,
