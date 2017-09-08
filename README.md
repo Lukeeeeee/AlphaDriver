@@ -30,6 +30,11 @@ VCS -> update project
 
 ## 4. TO DO LIST
 0. LSMS + DDPG: /src/model/ddpg, actor. critic: 即基于 RNN 的 DDPG 模型
+```bash
+1. tensorlayer 的varlist 的 bug 修复
+2. 抽象netCreator
+3. collection 实现 key 的 check 功能
+```
 1. Environment： /src/environment/ 主要包括：
 ```bash
     1. 和 gym_torcs 的接口 /src/environment/torcsEnvironment

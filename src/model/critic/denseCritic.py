@@ -31,10 +31,11 @@ class DenseCritic(Critic):
                                           n_units=self.config.config_dict['ACTION_LAYER_1_UNIT'],
                                           act=tf.nn.relu,
                                           name=name_prefix + 'ACTION_DENSE_LAYER_1')
-        net = tf.stack(values=[state_net.outputs, action_net.outputs], axis=1)
-        net = tf.reshape(tensor=net,
-                         shape=[-1, self.config.config_dict['ACTION_LAYER_1_UNIT'] +
-                                self.config.config_dict['STATE_LAYER_1_UNIT']])
+        # net = tf.stack(values=[state_net.outputs, action_net.outputs], axis=1)
+        # net = tf.reshape(tensor=net,
+        #                  shape=[-1, self.config.config_dict['ACTION_LAYER_1_UNIT'] +
+        #                         self.config.config_dict['STATE_LAYER_1_UNIT']])
+        net = tf.concat([state_net.outputs, action_net.outputs], axis=1)
 
         net = tl.layers.InputLayer(inputs=net,
                                    name=name_prefix + 'MIDDLE_INPUT')
@@ -81,3 +82,4 @@ if __name__ == '__main__':
     a = Config(standard_key_list=key_list)
     a.load_config(path=CONFIG_PATH + '/testCriticConfig.json')
     critic = DenseCritic(config=a)
+    pass
