@@ -35,10 +35,9 @@ class DenseCritic(Critic):
         # net = tf.reshape(tensor=net,
         #                  shape=[-1, self.config.config_dict['ACTION_LAYER_1_UNIT'] +
         #                         self.config.config_dict['STATE_LAYER_1_UNIT']])
-        net = tf.concat([state_net.outputs, action_net.outputs], axis=1)
-
-        net = tl.layers.InputLayer(inputs=net,
-                                   name=name_prefix + 'MIDDLE_INPUT')
+        net = tl.layers.ConcatLayer(layer=[state_net, action_net],
+                                    concat_dim=1,
+                                    name=name_prefix + 'STATE_ACTION_CONTACT_LAYER')
 
         net = tl.layers.DenseLayer(layer=net,
                                    n_units=self.config.config_dict['MERGED_LAYER_1_UNIT'],
@@ -82,4 +81,8 @@ if __name__ == '__main__':
     a = Config(standard_key_list=key_list)
     a.load_config(path=CONFIG_PATH + '/testCriticConfig.json')
     critic = DenseCritic(config=a)
+    with tf.Session() as sess:
+        with sess.as_default():
+            tl.layers.initialize_global_variables(sess)
+            critic.net.print_params()
     pass

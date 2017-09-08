@@ -110,11 +110,10 @@ class LSTMCritic(Critic):
                                     strides=self.config.config_dict['POOL2_STRIDE_SIZE'],
                                     name=name_prefix + 'POOL2_LAYER'
                                     )
-        pool2 = tf_contrib_layers.flatten(inputs=pool2.outputs)
+        pool2 = tl.layers.FlattenLayer(layer=pool2,
+                                       name=name_prefix + 'POOL2_FLATTEN_LAYER')
 
-        fc1 = tl.layers.InputLayer(inputs=pool2,
-                                   name=name_prefix + 'LSTM_FC1_INPUT_LAYER')
-        fc1 = tl.layers.DenseLayer(layer=fc1,
+        fc1 = tl.layers.DenseLayer(layer=pool2,
                                    n_units=self.config.config_dict['DENSE_LAYER_1_UNIT'],
                                    act=tf.nn.relu,
                                    name=name_prefix + 'DENSE_LAYER_1_LAYER')
@@ -124,22 +123,33 @@ class LSTMCritic(Critic):
                                               name=name_prefix + 'DENSE_LAYER_2_LAYER',
                                               keep=self.config.config_dict['DROP_OUT_PROB_VALUE'])
         feature_length_per_image = fc2.outputs.get_shape().as_list()[1]
-        lstm_input = tf.reshape(fc2.outputs, [-1, state_length, feature_length_per_image])
         # LSTM INPUT IS [BATCH_SIZE, LENGTH, FEATURE_DIM]
-
+        lstm_input = tl.layers.ReshapeLayer(layer=fc2,
+                                            shape=[-1, state_length, feature_length_per_image],
+                                            name=name_prefix + 'LSTM_FEATURE_RESHAPE_LAYER')
         # TODO
         # be aware of the init_state when train a lstm
-        lstm_input = tl.layers.InputLayer(inputs=lstm_input, name=name_prefix + 'LSTM_INPUT_LAYER')
 
         init_state = tf.placeholder(dtype=tf.float32,
                                     shape=[self.config.config_dict['LSTM_LAYERS_NUM'], 2, batch_size,
                                            self.config.config_dict['LSMT_INPUT_LENGTH']])
+        # init_state = tf.unstack(init_state, axis=0)
+        # init_state = (init_state[i] for i in range(self.config.config_dict['LSTM_LAYERS_NUM']))
         state_per_layers = tf.unstack(init_state, axis=0)
 
         rnn_tuple_state = tuple(
             [tf.nn.rnn_cell.LSTMStateTuple(state_per_layers[idx][0], state_per_layers[idx][1])
              for idx in range(self.config.config_dict['LSTM_LAYERS_NUM'])]
         )
+
+        # cell = tf.nn.rnn_cell.LSTMCell(self.config.config_dict['LSMT_INPUT_LENGTH'], reuse=False)
+        # cell = tf.nn.rnn_cell.MultiRNNCell([cell] * self.config.config_dict['LSTM_LAYERS_NUM'],
+        #                                    state_is_tuple=True)
+        # output, current_state = tf.nn.dynamic_rnn(cell=cell,
+        #                                           inputs=lstm_input,
+        #                                           initial_state=rnn_tuple_state,
+        #                                           time_major=False,)
+        # output_list_by_time = tf.unstack(output, axis=1)
 
         rnn = tl.layers.DynamicRNNLayer(layer=lstm_input,
                                         cell_fn=tf.nn.rnn_cell.LSTMCell,
@@ -151,21 +161,18 @@ class LSTMCritic(Critic):
                                         name=name_prefix + 'LSTM_LAYER'
                                         )
 
-        lstm_fc1 = tl.layers.InputLayer(inputs=rnn.outputs,
-                                        name=name_prefix + 'LSTM_FC_INPUT_LAYERS')
-        lstm_fc1 = tl.layers.DenseLayer(layer=lstm_fc1,
+        lstm_fc1 = tl.layers.DenseLayer(layer=rnn,
                                         n_units=self.config.config_dict['LSTM_DENSE_LAYER1_UNIT'],
                                         act=tf.nn.relu,
                                         name=name_prefix + 'LSTM_DENSE_LAYER_1')
         lstm_fc2 = tl.layers.DenseLayer(layer=lstm_fc1,
                                         n_units=self.config.config_dict['LSTM_DENSE_LAYER_2_UNIT'],
-                                        act=tf.nn.relu,
+                                        act=tf.nn.tanh,
                                         name=name_prefix + 'LSTM_DENSE_LAYER_2')
 
-        merged_input = tf.concat(values=[action_net.outputs, lstm_fc2.outputs], axis=1)
-
-        net = tl.layers.InputLayer(inputs=merged_input,
-                                   name=name_prefix + 'MERGED_STATE_ACTION_INPUT_LAYER')
+        net = tl.layers.ConcatLayer(layer=[action_net, lstm_fc2],
+                                    concat_dim=1,
+                                    name=name_prefix + 'MERGED_LAYER')
         net = tl.layers.DenseLayer(layer=net,
                                    n_units=self.config.config_dict['MERGED_LAYER_1_UNIT'],
                                    act=tf.nn.relu,
@@ -175,3 +182,20 @@ class LSTMCritic(Critic):
                                    act=tf.nn.relu,
                                    name=name_prefix + 'MERGED_DENSE_LAYER_2')
         return net
+
+
+if __name__ == '__main__':
+    from src.config.config import Config
+    from configuration import CONFIG_PATH
+    from configuration.standard_key_list import CONFIG_STANDARD_KEY_LIST
+    from src.config.utils import load_json
+
+    key_list = load_json(file_path=CONFIG_STANDARD_KEY_LIST + '/lstmCriticKeyList.json')
+    a = Config(config_dict=None, standard_key_list=key_list)
+    a.load_config(path=CONFIG_PATH + '/testLSTMCriticconfig.json')
+    critic = LSTMCritic(config=a)
+    with tf.Session() as sess:
+        with sess.as_default():
+            tl.layers.initialize_global_variables(sess)
+            critic.net.print_params()
+    pass

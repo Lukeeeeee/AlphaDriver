@@ -9,14 +9,23 @@ class Critic(Model):
 
         # TODO
         # HOW TO DEFINE THE TYPE OF THE STATE_DIM LIST OR A SCALAR?
+        if type(self.config.config_dict['STATE_DIM']) is list:
+            self.state = tf.placeholder(tf.float32, shape=[None] + self.config.config_dict['STATE_DIM'])
+            self.target_state = tf.placeholder(tf.float32, shape=[None] + self.config.config_dict['STATE_DIM'])
+        else:
+            self.state = tf.placeholder(tf.float32, shape=[None, self.config.config_dict['STATE_DIM']])
+            self.target_state = tf.placeholder(tf.float32, shape=[None, self.config.config_dict['STATE_DIM']])
 
-        self.state = tf.placeholder(tf.float32, shape=[None, self.config.config_dict['STATE_DIM']])
-        self.action = tf.placeholder(tf.float32, shape=[None, self.config.config_dict['ACTION_DIM']])
+        if type(self.config.config_dict['ACTION_DIM']) is list:
+            self.action = tf.placeholder(tf.float32, shape=[None] + self.config.config_dict['ACTION_DIM'])
+            self.target_action = tf.placeholder(tf.float32, shape=[None] + self.config.config_dict['ACTION_DIM'])
+        else:
+            self.action = tf.placeholder(tf.float32, shape=[None, self.config.config_dict['ACTION_DIM']])
+            self.target_action = tf.placeholder(tf.float32, shape=[None, self.config.config_dict['ACTION_DIM']])
+
         self.q_label = tf.placeholder(tf.float32, shape=[None, 1])
         self.is_training = tf.placeholder(tf.bool)
 
-        self.target_state = tf.placeholder(tf.float32, shape=[None, self.config.config_dict['STATE_DIM']])
-        self.target_action = tf.placeholder(tf.float32, shape=[None, self.config.config_dict['ACTION_DIM']])
         self.target_is_training = tf.placeholder(tf.bool)
 
         self.net = None
