@@ -5,6 +5,9 @@ from configuration.standard_key_list import CONFIG_STANDARD_KEY_LIST
 
 class DDPGConfig(Config):
     def __init__(self, standard_key_list, config_path=None):
+        # TODO
+        # SOLVE THE HARD CODE OF ACTOR KEY LIST AND CRITIC KEY LIST
+
         super(DDPGConfig, self).__init__(standard_key_list=standard_key_list)
         actor_key_list = load_json(file_path=CONFIG_STANDARD_KEY_LIST + '/actorKeyList.json')
         self.actor_config = Config(standard_key_list=actor_key_list)
