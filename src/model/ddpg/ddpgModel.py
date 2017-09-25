@@ -21,8 +21,8 @@ class DDPGModel(Model):
         next_state_batch = np.asarray([data[3] for data in mini_batch])
         done_batch = np.asarray([data[4] for data in mini_batch])
 
-        next_action_batch = self.actor.predict_target(sess=self.sess, state=next_state_batch)
-        q_value_batch = self.critic.predict_target(sess=self.sess, state=next_state_batch, action=next_action_batch)
+        next_action_batch = self.predict_target_action(state=next_state_batch)
+        q_value_batch = self.predict_target_q_value(state=next_state_batch, action=next_action_batch)
         y_batch = []
 
         for i in range(len(mini_batch)):
@@ -36,7 +36,9 @@ class DDPGModel(Model):
 
         action_batch_for_update = self.actor.predict(sess=self.sess, state=state_batch)
 
-        q_gradients = self.critic.predict(sess=self.sess, state=state_batch, action=action_batch_for_update)
+        q_gradients = self.critic.compute_action_gradients(sess=self.sess,
+                                                           state=state_batch,
+                                                           action=action_batch_for_update)
 
         actor_loss = self.actor.update(sess=self.sess, gradients=q_gradients, state=state_batch)
 
@@ -69,18 +71,23 @@ class DDPGModel(Model):
         if done is True:
             self.noise.reset()
 
-    # def save_model(self, global_step):
-            #     tl.files.save_ckpt(sess=self.sess, save_dir=self.config_json['MODEL_SAVE_DIR'], global_step=global_step)
-    #
-    # def load_model(self, global_step=None):
-    #     if global_step:
-    #         tl.files.load_ckpt(sess=self.sess,
-            #                            save_dir=self.config_json['MODEL_LOAD_DIR'] + '/model.ckpt-' + str(global_step))
-    #     else:
-    #         tl.files.load_ckpt(sess=self.sess,
-            #                            save_dir=self.config_json['MODE_LOAD_DIR'],
-    #                            is_latest=True)
-    #
+    def predict_q_value(self, state, action):
+        return self.critic.predict(sess=self.sess,
+                                   state=state,
+                                   action=action)
+
+    def predict_target_q_value(self, state, action):
+        return self.critic.predict_target(sess=self.sess,
+                                          state=state,
+                                          action=action)
+
+    def predict_action(self, state):
+        return self.actor.predict(sess=self.sess,
+                                  state=state)
+
+    def predict_target_action(self, state):
+        return self.actor.predict_target(sess=self.sess,
+                                         state=state)
 
 
 if __name__ == '__main__':
