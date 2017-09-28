@@ -15,7 +15,6 @@ class LSTMActor(Actor):
         W_init = tf.truncated_normal_initializer(stddev=0.01)
         b_init = tf.constant_initializer(value=0.0)
 
-        # state_shape = state.get_shape().as_list()
         image_state_shape = state('IMAGE').get_shape().as_list()
         batch_size = image_state_shape[0]
         state_length = image_state_shape[1]
@@ -127,23 +126,12 @@ class LSTMActor(Actor):
         init_state = tf.placeholder(dtype=tf.float32,
                                     shape=[self.config.config_dict['LSTM_LAYERS_NUM'], 2, batch_size,
                                            self.config.config_dict['LSMT_INPUT_LENGTH']])
-        # init_state = tf.unstack(init_state, axis=0)
-        # init_state = (init_state[i] for i in range(self.config.config_dict['LSTM_LAYERS_NUM']))
         state_per_layers = tf.unstack(init_state, axis=0)
 
         rnn_tuple_state = tuple(
             [tf.nn.rnn_cell.LSTMStateTuple(state_per_layers[idx][0], state_per_layers[idx][1])
              for idx in range(self.config.config_dict['LSTM_LAYERS_NUM'])]
         )
-
-        # cell = tf.nn.rnn_cell.LSTMCell(self.config.config_dict['LSMT_INPUT_LENGTH'], reuse=False)
-        # cell = tf.nn.rnn_cell.MultiRNNCell([cell] * self.config.config_dict['LSTM_LAYERS_NUM'],
-        #                                    state_is_tuple=True)
-        # output, current_state = tf.nn.dynamic_rnn(cell=cell,
-        #                                           inputs=lstm_input,
-        #                                           initial_state=rnn_tuple_state,
-        #                                           time_major=False,)
-        # output_list_by_time = tf.unstack(output, axis=1)
 
         rnn = tl.layers.DynamicRNNLayer(layer=lstm_input,
                                         cell_fn=tf.nn.rnn_cell.LSTMCell,

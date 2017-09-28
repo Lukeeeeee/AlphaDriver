@@ -26,11 +26,11 @@ def flatten_and_concat_tensors(name_prefix, tensor_dict):
                                                name=name_prefix + 'RESHAPE_LAYER_' + name)
 
         flatten_layer = tl.layers.FlattenLayer(layer=reshape_layer,
-                                               name=name_prefix + '_FLATTEN_LAYER_' + name)
+                                               name=name_prefix + 'FLATTEN_LAYER_' + name)
         flattened_input_list.append(flatten_layer)
     flattened_input_list = tl.layers.ConcatLayer(layer=flattened_input_list,
                                                  concat_dim=1,
-                                                 name=name_prefix + '_CONCAT_LOW_DIM_INPUT_LAYER')
+                                                 name=name_prefix + 'CONCAT_LOW_DIM_INPUT_LAYER')
     return flattened_input_list
 
 

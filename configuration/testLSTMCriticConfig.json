@@ -1,13 +1,25 @@
 {
   "LEARNING_RATE": 0.01,
   "DECAY": 0.01,
-  "STATE_DIM": [
-    5,
-    10,
-    10,
-    3
-  ],
-  "ACTION_DIM": 10,
+  "STATE": {
+    "IMAGE": [
+      5,
+      10,
+      10,
+      3
+    ],
+    "SPEED": [
+      5,
+      3
+    ],
+    "POS": [
+      5,
+      1
+    ]
+  },
+  "ACTION": {
+      "LOW_DIM": [5, 10]
+  },
   "ACTION_LAYER_1_UNIT": 20,
   "ACTION_LAYER_2_UNIT": 40,
   "CONV1_1_CHANNEL_SIZE": 5,
