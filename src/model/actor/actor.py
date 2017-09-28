@@ -1,18 +1,20 @@
 from src.model.model import Model
-import tensorlayer as tl
 import tensorflow as tf
-import src.model.utils as utils
+from src.model.inputs.Inputs import Inputs
 
 
 class Actor(Model):
     def __init__(self, config, sess_flag=False, data=None):
         super(Actor, self).__init__(config, sess_flag, data)
-        if type(self.config.config_dict['STATE_DIM']) is list:
-            self.state = tf.placeholder(tf.float32, shape=[None] + self.config.config_dict['STATE_DIM'])
-            self.target_state = tf.placeholder(tf.float32, shape=[None] + self.config.config_dict['STATE_DIM'])
-        else:
-            self.state = tf.placeholder(tf.float32, shape=[None, self.config.config_dict['STATE_DIM']])
-            self.target_state = tf.placeholder(tf.float32, shape=[None, self.config.config_dict['STATE_DIM']])
+        self.state = Inputs(config=self.config.config_dict['STATE'])
+        self.target_state = Inputs(config=self.config.config_dict['STATE'])
+
+        # if type(self.config.config_dict['STATE_DIM']) is list:
+        #     self.state = tf.placeholder(tf.float32, shape=[None] + self.config.config_dict['STATE_DIM'])
+        #     self.target_state = tf.placeholder(tf.float32, shape=[None] + self.config.config_dict['STATE_DIM'])
+        # else:
+        #     self.state = tf.placeholder(tf.float32, shape=[None, self.config.config_dict['STATE_DIM']])
+        #     self.target_state = tf.placeholder(tf.float32, shape=[None, self.config.config_dict['STATE_DIM']])
 
         self.is_training = tf.placeholder(tf.bool)
         self.q_value_gradients = tf.placeholder(tf.float32, [None, self.config.config_dict['ACTION_DIM']])
@@ -56,7 +58,7 @@ class Actor(Model):
         loss, gradients = sess.run(fetches=[self.optimize_loss, self.q_value_gradients],
                                    feed_dict={
                                        self.q_value_gradients: gradients,
-                                       self.state: state,
+                                       self.state.tensor_tuple: self.state.generate_inputs_tuple(data_dict=state),
                                        self.is_training: True
                                     })
         return loss, gradients
@@ -71,7 +73,7 @@ class Actor(Model):
     def predict(self, sess, state):
         action = sess.run(fetches=[self.action],
                           feed_dict={
-                              self.state: state,
+                              self.state.tensor_tuple: self.state.generate_inputs_tuple(data_dict=state),
                               self.is_training: False
                           })
         return action
@@ -79,7 +81,7 @@ class Actor(Model):
     def predict_target(self, sess, state):
         action = sess.run(fetches=[self.target_action],
                           feed_dict={
-                              self.target_state: state,
+                              self.target_state.tensor_tuple: self.target_state.generate_inputs_tuple(data_dict=state),
                               self.target_is_training: False
                           })
         return action

@@ -1,7 +1,7 @@
 from src.model.actor.actor import Actor
 import tensorlayer as tl
 import tensorflow as tf
-import tensorflow.contrib.layers as tf_contrib_layers
+import src.model.utils.utils as utils
 
 
 class LSTMActor(Actor):
@@ -15,13 +15,22 @@ class LSTMActor(Actor):
         W_init = tf.truncated_normal_initializer(stddev=0.01)
         b_init = tf.constant_initializer(value=0.0)
 
-        state_shape = state.get_shape().as_list()
-        batch_size = state_shape[0]
-        state_length = state_shape[1]
-        state_batch = tf.reshape(tensor=state,
-                                 shape=[-1, state_shape[2], state_shape[3], state_shape[4]])
+        # state_shape = state.get_shape().as_list()
+        image_state_shape = state('IMAGE').get_shape().as_list()
+        batch_size = image_state_shape[0]
+        state_length = image_state_shape[1]
+        state_batch = tf.reshape(tensor=state('IMAGE'),
+                                 shape=[-1, image_state_shape[2], image_state_shape[3], image_state_shape[4]])
 
-        inputs_image = tl.layers.InputLayer(inputs=state_batch, name=name_prefix + 'INPUT_LAYER')
+        inputs_image = tl.layers.InputLayer(inputs=state_batch, name=name_prefix + 'INPUT_LAYER_' + 'IMAGE')
+
+        merge_tensor_dict = {}
+        for name, tensor in state().items():
+            if name != 'IMAGE':
+                merge_tensor_dict[name] = tensor
+        merged_flattened_input = utils.flatten_and_concat_tensors(name_prefix=name_prefix,
+                                                                  tensor_dict=merge_tensor_dict)
+
         conv1 = tl.layers.Conv2d(net=inputs_image,
                                  n_filter=self.config.config_dict['CONV1_1_CHANNEL_SIZE'],
                                  filter_size=self.config.config_dict['CONV1_1_FILTER_SIZE'],
@@ -104,10 +113,13 @@ class LSTMActor(Actor):
                                               act=tf.nn.sigmoid,
                                               name=name_prefix + 'DENSE_LAYER_2_LAYER',
                                               keep=self.config.config_dict['DROP_OUT_PROB_VALUE'])
-        feature_length_per_image = fc2.outputs.get_shape().as_list()[1]
+        feature_layer = tl.layers.ConcatLayer(layer=[fc2, merged_flattened_input],
+                                              concat_dim=1,
+                                              name=name_prefix + 'LSTM_FEATURE_CONCAT_LAYER')
+        feature_length = feature_layer.outputs.get_shape().as_list()[1]
         # LSTM INPUT IS [BATCH_SIZE, LENGTH, FEATURE_DIM]
-        lstm_input = tl.layers.ReshapeLayer(layer=fc2,
-                                            shape=[-1, state_length, feature_length_per_image],
+        lstm_input = tl.layers.ReshapeLayer(layer=feature_layer,
+                                            shape=[-1, state_length, feature_length],
                                             name=name_prefix + 'LSTM_FEATURE_RESHAPE_LAYER')
         # TODO
         # be aware of the init_state when train a lstm
@@ -174,5 +186,4 @@ if __name__ == '__main__':
         with sess.as_default():
             tl.layers.initialize_global_variables(sess)
             actor.net.print_params()
-    pass
     pass
