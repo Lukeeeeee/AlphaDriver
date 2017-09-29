@@ -1,5 +1,6 @@
 import tensorlayer as tl
 import tensorflow as tf
+import json
 
 
 def require_a_kwarg(name, kwargs):
@@ -33,6 +34,11 @@ def flatten_and_concat_tensors(name_prefix, tensor_dict):
                                                  name=name_prefix + 'CONCAT_LOW_DIM_INPUT_LAYER')
     return flattened_input_list
 
+
+def load_json(file_path):
+    with open(file_path, 'r') as f:
+        res = json.load(f)
+        return res
 
 # def merge_two_dict(*args):
 #     z = a.copy()

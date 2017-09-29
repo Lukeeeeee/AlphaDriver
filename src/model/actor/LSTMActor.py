@@ -2,9 +2,12 @@ from src.model.actor.actor import Actor
 import tensorlayer as tl
 import tensorflow as tf
 import src.model.utils.utils as utils
+from configuration.standard_key_list import CONFIG_STANDARD_KEY_LIST
 
 
 class LSTMActor(Actor):
+    standard_key_list = utils.load_json(file_path=CONFIG_STANDARD_KEY_LIST + '/lstmActorKeyList.json')
+
     def __init__(self, config, sess_flag=False, data=None):
         super(LSTMActor, self).__init__(config, sess_flag, data)
         self.net = self.create_model(state=self.state, name_prefix='ACTOR_')
@@ -163,11 +166,8 @@ class LSTMActor(Actor):
 if __name__ == '__main__':
     from src.config.config import Config
     from configuration import CONFIG_PATH
-    from configuration.standard_key_list import CONFIG_STANDARD_KEY_LIST
-    from src.config.utils import load_json
 
-    key_list = load_json(file_path=CONFIG_STANDARD_KEY_LIST + '/lstmActorKeyList.json')
-    a = Config(config_dict=None, standard_key_list=key_list)
+    a = Config(config_dict=None, standard_key_list=LSTMActor.standard_key_list)
     a.load_config(path=CONFIG_PATH + '/testLSTMActorConfig.json')
     actor = LSTMActor(config=a)
     with tf.Session() as sess:

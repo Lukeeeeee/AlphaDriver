@@ -1,15 +1,18 @@
 import tensorlayer as tl
 import tensorflow as tf
-import src.model.utils as utils
 from src.model.actor.actor import Actor
+from configuration.standard_key_list import CONFIG_STANDARD_KEY_LIST
+import src.model.utils.utils as utils
 
 
 class DenseActor(Actor):
+    standard_key_list = utils.load_json(file_path=CONFIG_STANDARD_KEY_LIST + '/actorKeyList.json')
+
     def __init__(self, config, sess_flag=False, data=None):
         super(DenseActor, self).__init__(config, sess_flag, data)
 
-        self.net = self.create_model(self.state, 'ACTOR_')
-        self.target_net = self.create_model(self.target_state, 'TARGET_ACTOR_')
+        self.net = self.create_model(self.state('test'), 'ACTOR_')
+        self.target_net = self.create_model(self.target_state('test'), 'TARGET_ACTOR_')
         self.optimizer, self.optimize_loss = self.create_training_method()
 
     def create_model(self, state, name_prefix):
@@ -42,10 +45,8 @@ if __name__ == '__main__':
     from src.config.config import Config
     from configuration import CONFIG_PATH
     from configuration.standard_key_list import CONFIG_STANDARD_KEY_LIST
-    from src.config.utils import load_json
 
-    key_list = load_json(file_path=CONFIG_STANDARD_KEY_LIST + '/actorKeyList.json')
-    a = Config(config_dict=None, standard_key_list=key_list)
+    a = Config(config_dict=None, standard_key_list=DenseActor.standard_key_list)
     a.load_config(path=CONFIG_PATH + '/testActorConfig.json')
     actor = DenseActor(config=a)
     pass

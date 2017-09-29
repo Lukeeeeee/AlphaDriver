@@ -1,11 +1,12 @@
 from src.model.model import Model
-import src.model.utils as utils
 import numpy as np
-import tensorflow as tf
-import tensorlayer as tl
+import src.model.utils as utils
+from configuration.standard_key_list import CONFIG_STANDARD_KEY_LIST
 
 
 class DDPGModel(Model):
+    standard_key_list = utils.load_json(file_path=CONFIG_STANDARD_KEY_LIST + '/ddpgKeyList.json')
+
     def __init__(self, config, actor, critic, sess_flag=False, data=None):
         super(DDPGModel, self).__init__(config, sess_flag, data)
         self.actor = actor(config=config.actor_config)
@@ -93,12 +94,12 @@ class DDPGModel(Model):
 if __name__ == '__main__':
     from src.config.ddpgConfig import DDPGConfig
     from configuration import CONFIG_PATH
-    from src.config.utils import load_json
-    from src.model.actor.denseActor import DenseActor
-    from src.model.critic.denseCritic import DenseCritic
-    from configuration.standard_key_list import CONFIG_STANDARD_KEY_LIST
+    from src.model.actor.LSTMActor import LSTMActor
+    from src.model.critic.LSTMCritic import LSTMCritic
 
-    key_list = load_json(file_path=CONFIG_STANDARD_KEY_LIST + '/ddpgKeyList.json')
-
-    a = DDPGConfig(config_path=CONFIG_PATH + '/testDDPGConfig.json', standard_key_list=key_list)
-    ddpg = DDPGModel(config=a, actor=DenseActor, critic=DenseCritic)
+    a = DDPGConfig(config_path=CONFIG_PATH + '/testDDPGConfig.json',
+                   ddpg_standard_key_list=DDPGModel.standard_key_list,
+                   actor_standard_key_list=LSTMActor.standard_key_list,
+                   critic_standard_key_list=LSTMCritic.standard_key_list
+                   )
+    ddpg = DDPGModel(config=a, actor=LSTMActor, critic=LSTMCritic)

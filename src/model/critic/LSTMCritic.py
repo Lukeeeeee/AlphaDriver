@@ -2,9 +2,12 @@ from src.model.critic.critic import Critic
 import tensorflow as tf
 import tensorlayer as tl
 import src.model.utils.utils as utils
+from configuration.standard_key_list import CONFIG_STANDARD_KEY_LIST
 
 
 class LSTMCritic(Critic):
+    standard_key_list = utils.load_json(file_path=CONFIG_STANDARD_KEY_LIST + '/lstmCriticKeyList.json')
+
     def __init__(self, config, sess_flag=False, data=None):
         super(LSTMCritic, self).__init__(config, sess_flag, data)
         self.net = self.create_model(state=self.state,
@@ -194,11 +197,8 @@ class LSTMCritic(Critic):
 if __name__ == '__main__':
     from src.config.config import Config
     from configuration import CONFIG_PATH
-    from configuration.standard_key_list import CONFIG_STANDARD_KEY_LIST
-    from src.config.utils import load_json
 
-    key_list = load_json(file_path=CONFIG_STANDARD_KEY_LIST + '/lstmCriticKeyList.json')
-    a = Config(config_dict=None, standard_key_list=key_list)
+    a = Config(config_dict=None, standard_key_list=LSTMCritic.standard_key_list)
     a.load_config(path=CONFIG_PATH + '/testLSTMCriticconfig.json')
     critic = LSTMCritic(config=a)
     with tf.Session() as sess:

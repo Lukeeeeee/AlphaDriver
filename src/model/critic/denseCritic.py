@@ -1,9 +1,13 @@
 import tensorflow as tf
 import tensorlayer as tl
 from src.model.critic.critic import Critic
+from configuration.standard_key_list import CONFIG_STANDARD_KEY_LIST
+import src.model.utils.utils as utils
 
 
 class DenseCritic(Critic):
+    standard_key_list = utils.load_json(file_path=CONFIG_STANDARD_KEY_LIST + '/criticKeyList.json')
+
     def __init__(self, config, sess_flag=False, data=None):
         super(DenseCritic, self).__init__(config, sess_flag, data)
 
@@ -73,12 +77,9 @@ class DenseCritic(Critic):
 
 if __name__ == '__main__':
     from src.config.config import Config
-    from src.config.utils import load_json
     from configuration import CONFIG_PATH
-    from configuration.standard_key_list import CONFIG_STANDARD_KEY_LIST
 
-    key_list = load_json(file_path=CONFIG_STANDARD_KEY_LIST + '/criticKeyList.json')
-    a = Config(standard_key_list=key_list)
+    a = Config(standard_key_list=DenseCritic.standard_key_list)
     a.load_config(path=CONFIG_PATH + '/testCriticConfig.json')
     critic = DenseCritic(config=a)
     with tf.Session() as sess:
