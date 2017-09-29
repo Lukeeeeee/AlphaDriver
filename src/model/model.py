@@ -2,6 +2,7 @@ import tensorflow as tf
 
 
 class Model(object):
+    standard_key_list = []
 
     def __init__(self, config, sess_flag=False, data=None):
         self.config = config

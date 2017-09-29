@@ -13,7 +13,7 @@ class DDPGAgent(Agent):
         super(DDPGAgent, self).__init__(env=env, config=config, model=model)
         if model is None:
             key_list = load_json(file_path=CONFIG_STANDARD_KEY_LIST + '/ddpgKeyList.json')
-            a = DDPGConfig(config_path=CONFIG_PATH + '/testDDPGConfig.json', standard_key_list=key_list)
+            a = DDPGConfig(config_path=CONFIG_PATH + '/testDDPGConfig.json', ddpg_standard_key_list=key_list)
 
             self.model = DDPGModel(config=a,
                                    actor=DenseActor,

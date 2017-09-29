@@ -1,11 +1,12 @@
 from src.model.model import Model
-import src.model.utils as utils
 import numpy as np
-import tensorflow as tf
-import tensorlayer as tl
+import src.model.utils as utils
+from configuration.standard_key_list import CONFIG_STANDARD_KEY_LIST
 
 
 class DDPGModel(Model):
+    standard_key_list = utils.load_json(file_path=CONFIG_STANDARD_KEY_LIST + '/ddpgKeyList.json')
+
     def __init__(self, config, actor, critic, sess_flag=False, data=None):
         super(DDPGModel, self).__init__(config, sess_flag, data)
         self.actor = actor(config=config.actor_config)
@@ -21,8 +22,8 @@ class DDPGModel(Model):
         next_state_batch = np.asarray([data[3] for data in mini_batch])
         done_batch = np.asarray([data[4] for data in mini_batch])
 
-        next_action_batch = self.actor.predict_target(sess=self.sess, state=next_state_batch)
-        q_value_batch = self.critic.predict_target(sess=self.sess, state=next_state_batch, action=next_action_batch)
+        next_action_batch = self.predict_target_action(state=next_state_batch)
+        q_value_batch = self.predict_target_q_value(state=next_state_batch, action=next_action_batch)
         y_batch = []
 
         for i in range(len(mini_batch)):
@@ -36,7 +37,9 @@ class DDPGModel(Model):
 
         action_batch_for_update = self.actor.predict(sess=self.sess, state=state_batch)
 
-        q_gradients = self.critic.predict(sess=self.sess, state=state_batch, action=action_batch_for_update)
+        q_gradients = self.critic.compute_action_gradients(sess=self.sess,
+                                                           state=state_batch,
+                                                           action=action_batch_for_update)
 
         actor_loss = self.actor.update(sess=self.sess, gradients=q_gradients, state=state_batch)
 
@@ -69,29 +72,34 @@ class DDPGModel(Model):
         if done is True:
             self.noise.reset()
 
-    # def save_model(self, global_step):
-            #     tl.files.save_ckpt(sess=self.sess, save_dir=self.config_json['MODEL_SAVE_DIR'], global_step=global_step)
-    #
-    # def load_model(self, global_step=None):
-    #     if global_step:
-    #         tl.files.load_ckpt(sess=self.sess,
-            #                            save_dir=self.config_json['MODEL_LOAD_DIR'] + '/model.ckpt-' + str(global_step))
-    #     else:
-    #         tl.files.load_ckpt(sess=self.sess,
-            #                            save_dir=self.config_json['MODE_LOAD_DIR'],
-    #                            is_latest=True)
-    #
+    def predict_q_value(self, state, action):
+        return self.critic.predict(sess=self.sess,
+                                   state=state,
+                                   action=action)
+
+    def predict_target_q_value(self, state, action):
+        return self.critic.predict_target(sess=self.sess,
+                                          state=state,
+                                          action=action)
+
+    def predict_action(self, state):
+        return self.actor.predict(sess=self.sess,
+                                  state=state)
+
+    def predict_target_action(self, state):
+        return self.actor.predict_target(sess=self.sess,
+                                         state=state)
 
 
 if __name__ == '__main__':
     from src.config.ddpgConfig import DDPGConfig
     from configuration import CONFIG_PATH
-    from src.config.utils import load_json
-    from src.model.actor.denseActor import DenseActor
-    from src.model.critic.denseCritic import DenseCritic
-    from configuration.standard_key_list import CONFIG_STANDARD_KEY_LIST
+    from src.model.actor.LSTMActor import LSTMActor
+    from src.model.critic.LSTMCritic import LSTMCritic
 
-    key_list = load_json(file_path=CONFIG_STANDARD_KEY_LIST + '/ddpgKeyList.json')
-
-    a = DDPGConfig(config_path=CONFIG_PATH + '/testDDPGConfig.json', standard_key_list=key_list)
-    ddpg = DDPGModel(config=a, actor=DenseActor, critic=DenseCritic)
+    a = DDPGConfig(config_path=CONFIG_PATH + '/testDDPGConfig.json',
+                   ddpg_standard_key_list=DDPGModel.standard_key_list,
+                   actor_standard_key_list=LSTMActor.standard_key_list,
+                   critic_standard_key_list=LSTMCritic.standard_key_list
+                   )
+    ddpg = DDPGModel(config=a, actor=LSTMActor, critic=LSTMCritic)

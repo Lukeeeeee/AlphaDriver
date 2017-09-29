@@ -1,7 +1,9 @@
 {
   "LEARNING_RATE": 0.01,
   "DECAY": 0.01,
-  "STATE_DIM": 10,
+  "STATE": {
+    "test": [10]
+  },
   "ACTION_DIM": 10,
   "DENSE_LAYER_1_UNIT": 10,
   "DENSE_LAYER_2_UNIT": 20,

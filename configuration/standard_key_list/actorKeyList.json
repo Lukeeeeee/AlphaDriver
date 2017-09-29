@@ -1,7 +1,7 @@
 [
   "LEARNING_RATE",
   "DECAY",
-  "STATE_DIM",
+  "STATE",
   "ACTION_DIM",
   "DENSE_LAYER_1_UNIT",
   "DENSE_LAYER_2_UNIT",
