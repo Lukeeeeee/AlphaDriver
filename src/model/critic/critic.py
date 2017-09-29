@@ -1,27 +1,31 @@
 from src.model.model import Model
 import tensorflow as tf
 import tensorlayer as tl
+from src.model.inputs.Inputs import Inputs
 
 
 class Critic(Model):
     def __init__(self, config, sess_flag=False, data=None):
         super(Critic, self).__init__(config, sess_flag, data)
+        self.state = Inputs(config=self.config.config_dict['STATE'])
+        self.target_state = Inputs(config=self.config.config_dict['STATE'])
 
-        # TODO
-        # HOW TO DEFINE THE TYPE OF THE STATE_DIM LIST OR A SCALAR?
-        if type(self.config.config_dict['STATE_DIM']) is list:
-            self.state = tf.placeholder(tf.float32, shape=[None] + self.config.config_dict['STATE_DIM'])
-            self.target_state = tf.placeholder(tf.float32, shape=[None] + self.config.config_dict['STATE_DIM'])
-        else:
-            self.state = tf.placeholder(tf.float32, shape=[None, self.config.config_dict['STATE_DIM']])
-            self.target_state = tf.placeholder(tf.float32, shape=[None, self.config.config_dict['STATE_DIM']])
+        # if type(self.config.config_dict['STATE_DIM']) is list:
+        #     self.state = tf.placeholder(tf.float32, shape=[None] + self.config.config_dict['STATE_DIM'])
+        #     self.target_state = tf.placeholder(tf.float32, shape=[None] + self.config.config_dict['STATE_DIM'])
+        # else:
+        #     self.state = tf.placeholder(tf.float32, shape=[None, self.config.config_dict['STATE_DIM']])
+        #     self.target_state = tf.placeholder(tf.float32, shape=[None, self.config.config_dict['STATE_DIM']])
 
-        if type(self.config.config_dict['ACTION_DIM']) is list:
-            self.action = tf.placeholder(tf.float32, shape=[None] + self.config.config_dict['ACTION_DIM'])
-            self.target_action = tf.placeholder(tf.float32, shape=[None] + self.config.config_dict['ACTION_DIM'])
-        else:
-            self.action = tf.placeholder(tf.float32, shape=[None, self.config.config_dict['ACTION_DIM']])
-            self.target_action = tf.placeholder(tf.float32, shape=[None, self.config.config_dict['ACTION_DIM']])
+        self.action = Inputs(config=self.config.config_dict['ACTION'])
+        self.target_action = Inputs(config=self.config.config_dict['ACTION'])
+
+        # if type(self.config.config_dict['ACTION_DIM']) is list:
+        #     self.action = tf.placeholder(tf.float32, shape=[None] + self.config.config_dict['ACTION_DIM'])
+        #     self.target_action = tf.placeholder(tf.float32, shape=[None] + self.config.config_dict['ACTION_DIM'])
+        # else:
+        #     self.action = tf.placeholder(tf.float32, shape=[None, self.config.config_dict['ACTION_DIM']])
+        #     self.target_action = tf.placeholder(tf.float32, shape=[None, self.config.config_dict['ACTION_DIM']])
 
         self.q_label = tf.placeholder(tf.float32, shape=[None, 1])
         self.is_training = tf.placeholder(tf.bool)
