@@ -2,9 +2,13 @@ from src.environment.environment import Environment
 from src.environment.torcsEnvironment.torcs.gym_torcs import TorcsEnv
 from collections import deque
 from src.environment.utils import slice_queue
+import src.environment.utils as utils
+from configuration.standard_key_list import CONFIG_STANDARD_KEY_LIST
 
 
 class TorcsEnvironment(Environment):
+    standard_key_list = utils.load_json(CONFIG_STANDARD_KEY_LIST + '/torcsEnvironmentKeyList.json')
+
     def __init__(self, config):
         super(TorcsEnvironment, self).__init__(config)
         self.torcs_env = TorcsEnv(vision=True,
@@ -39,3 +43,11 @@ class TorcsEnvironment(Environment):
                           left=left,
                           right=right)
         return img
+
+
+if __name__ == '__main__':
+    from src.config.config import Config
+    from configuration import CONFIG_PATH
+    a = Config(standard_key_list=TorcsEnvironment.standard_key_list)
+    a.load_config(path=CONFIG_PATH + '/testTorcsEnvironmentConfig.json')
+    env = TorcsEnvironment(config=a)
