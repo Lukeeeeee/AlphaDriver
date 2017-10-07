@@ -6,9 +6,14 @@ from src.model.actor.denseActor import DenseActor
 from src.model.critic.denseCritic import DenseCritic
 from src.model.critic.LSTMCritic import LSTMCritic
 from src.model.actor.LSTMActor import LSTMActor
+from src.model.utils.utils import load_json
+from configuration.standard_key_list import CONFIG_STANDARD_KEY_LIST
 
 
 class DDPGAgent(Agent):
+
+    standard_key_list = load_json(CONFIG_STANDARD_KEY_LIST + '/DDPGAgentKeyList.json')
+
     def __init__(self, env, config, model=None):
         super(DDPGAgent, self).__init__(env=env, config=config, model=model)
         if model is None:
