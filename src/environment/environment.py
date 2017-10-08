@@ -1,6 +1,8 @@
 
 
 class Environment(object):
+    standard_key_list = []
+    
     def __init__(self, config):
         self.config = config
         pass

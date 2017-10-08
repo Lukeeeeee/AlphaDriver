@@ -1,6 +1,9 @@
 
 
 class Agent(object):
+
+    standard_key_list = []
+
     def __init__(self, env, config, model=None):
         self.env = env
         self.config = config

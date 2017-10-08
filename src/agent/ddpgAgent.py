@@ -2,22 +2,29 @@ from src.agent.agent import Agent
 from src.model.ddpg.ddpgModel import DDPGModel
 from src.config.ddpgConfig import DDPGConfig
 from configuration import CONFIG_PATH
-from src.config.utils import load_json
 from src.model.actor.denseActor import DenseActor
 from src.model.critic.denseCritic import DenseCritic
+from src.model.critic.LSTMCritic import LSTMCritic
+from src.model.actor.LSTMActor import LSTMActor
+from src.model.utils.utils import load_json
 from configuration.standard_key_list import CONFIG_STANDARD_KEY_LIST
 
 
 class DDPGAgent(Agent):
+
+    standard_key_list = load_json(CONFIG_STANDARD_KEY_LIST + '/DDPGAgentKeyList.json')
+
     def __init__(self, env, config, model=None):
         super(DDPGAgent, self).__init__(env=env, config=config, model=model)
         if model is None:
-            key_list = load_json(file_path=CONFIG_STANDARD_KEY_LIST + '/ddpgKeyList.json')
-            a = DDPGConfig(config_path=CONFIG_PATH + '/testDDPGConfig.json', ddpg_standard_key_list=key_list)
+            a = DDPGConfig(config_path=CONFIG_PATH + '/testDDPGConfig.json',
+                           ddpg_standard_key_list=DDPGModel.standard_key_list,
+                           actor_standard_key_list=LSTMActor.standard_key_list,
+                           critic_standard_key_list=LSTMCritic.standard_key_list)
 
             self.model = DDPGModel(config=a,
-                                   actor=DenseActor,
-                                   critic=DenseCritic)
+                                   actor=LSTMActor,
+                                   critic=LSTMCritic)
 
     def play(self):
         for i in range(self.config.config_dict['EPISODE_COUNT']):
