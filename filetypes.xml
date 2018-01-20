@@ -5,6 +5,7 @@
       <mapping ext="mp4" type="Native" />
       <mapping pattern="4-15-test1-epoch=1000.txt" type="PLAIN_TEXT" />
       <mapping pattern="4-15-test1-epoch=1000" type="PLAIN_TEXT" />
+      <mapping pattern="algorithm_latex" type="PLAIN_TEXT" />
       <mapping ext="csv" type="PLAIN_TEXT" />
       <mapping ext="mat" type="PLAIN_TEXT" />
       <mapping ext="data" type="PLAIN_TEXT" />
